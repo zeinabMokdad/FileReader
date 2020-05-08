@@ -1,31 +1,58 @@
 package com.demo;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.*;
 import java.nio.file.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class FileReaderHelper {
+public class FileReaderHelper implements Runnable {
+    private String FilePath;
 
-    public Map<String, Integer> readFile(String path) throws IOException {
+    public FileReaderHelper(String filePath) {
+        this.FilePath = filePath;
+    }
 
-        Map<String, Integer> words_kvp = new HashMap<>();
-        List<String> allLines = Files.readAllLines(Paths.get(path));
+    public void process() throws IOException {
+        File file = new File(FilePath);
+        try (InputStream inputStream = new FileInputStream(file)) {
+            writeStream(inputStream);
+        }
+    }
 
-        for (String line : allLines) {
-            String[] words = line.split(" ");
-            for (String word : words) {
-                String lowerCaseWord = word.toLowerCase();
-                Integer wordCount = words_kvp.get(lowerCaseWord);
-                if (wordCount == null)
-                    words_kvp.put(lowerCaseWord, 1);
-                else
-                    words_kvp.put(lowerCaseWord, wordCount + 1);
+    public void writeStream(InputStream inputStream) throws IOException {
+        File outputFile = new File(String.valueOf(Paths.get("output.txt")));
+        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            int fileReturnedValue;
+            while ((fileReturnedValue = inputStream.read()) != -1) {
+                fos.write(fileReturnedValue);
             }
         }
-        return words_kvp;
+    }
+
+    @Override
+    public void run() {
+        try {
+            process();
+        } catch (IOException exc) {
+            System.out.println(exc.getMessage());
+        }
     }
 }
+
+//    public Map<String, Integer> readFile(String path) throws IOException {
+//
+//        Map<String, Integer> words_kvp = new HashMap<>();
+//        List<String> allLines = Files.readAllLines(Paths.get(path));
+//
+//        for (String line : allLines) {
+//            String[] words = line.split(" ");
+//            for (String word : words) {
+//                String lowerCaseWord = word.toLowerCase();
+//                Integer wordCount = words_kvp.get(lowerCaseWord);
+//                if (wordCount == null)
+//                    words_kvp.put(lowerCaseWord, 1);
+//                else
+//                    words_kvp.put(lowerCaseWord, wordCount + 1);
+//            }
+//        }
+//        return words_kvp;
+//    }
+
