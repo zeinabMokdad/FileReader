@@ -48,7 +48,7 @@ public class FileHelper {
             wordsCount.merge(lowerCaseWord, 1, Integer::sum);
         }
     }
-    public void Write(Map<String, Integer> wordsCount, File outputFile) throws IOException {
+    private void Write(Map<String, Integer> wordsCount, File outputFile) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputFile))) {
             for (Map.Entry<String, Integer> entry : wordsCount.entrySet()) {
                 bufferedWriter.write(entry.getKey() + ":" + entry.getValue());
