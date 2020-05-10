@@ -1,1 +1,1 @@
-hi:1test:2hello:3anthony:1zeinab:2zeinab:2
+hi:1test:1hello:1anthony:1zeinab:1

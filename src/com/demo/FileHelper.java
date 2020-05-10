@@ -38,22 +38,22 @@ public class FileHelper {
         Write(words_kvp);
     }
 
-    private synchronized void processLine(String line, ConcurrentHashMap<String, Integer> wordsCount) {
+    private  void processLine(String line, ConcurrentHashMap<String, Integer> wordsCount) {
         String[] words = line.split(" ");
 
         for (String word : words) {
             if (word.isEmpty() || word.isBlank())
                 continue;
 
-            String lowerCaseWord = word.toLowerCase();
-            Integer wordCount = wordsCount.get(lowerCaseWord);
-            if (wordCount == null)
-                wordsCount.put(lowerCaseWord, 1);
-            else
-                wordsCount.put(lowerCaseWord, wordCount + 1);
+//            String lowerCaseWord = word.toLowerCase();
+//            Integer wordCount = wordsCount.get(lowerCaseWord);
+//            if (wordCount == null)
+//                wordsCount.put(lowerCaseWord, 1);
+//            else
+//                wordsCount.put(lowerCaseWord, wordCount + 1);
 
-//            wordsCount.compute(word.toLowerCase(), (key, val) ->
-//                    val == null ? 1 : val++);
+            wordsCount.compute(word.toLowerCase(), (key, val) ->
+                    val == null ? 1 : val++);
         }
     }
 
