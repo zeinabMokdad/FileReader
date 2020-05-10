@@ -1,10 +1,9 @@
 package com.demo;
 
+import java.awt.desktop.OpenFilesEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,27 +21,21 @@ public class FileHelper {
     public void processLargeFiles() throws IOException {
         ConcurrentHashMap<String, Integer> words_kvp = new ConcurrentHashMap<>();
 
-        Path path = Paths.get("Output.txt");
-        File outputFile = path.toFile();
-
         Files.lines(Paths.get(fileURI), StandardCharsets.UTF_8).parallel().forEach(
                 line -> processLine(line, words_kvp));
 
-        Write(words_kvp, outputFile);
+        Write(words_kvp);
     }
 
     public void process() throws IOException {
         ConcurrentHashMap<String, Integer> words_kvp = new ConcurrentHashMap<>();
-
-        Path path = Paths.get("Output.txt");
-        File outputFile = path.toFile();
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         Files.lines(Paths.get(fileURI), StandardCharsets.UTF_8).forEach(
                 line -> executorService.submit(() -> processLine(line, words_kvp))
         );
         executorService.shutdown();
-        Write(words_kvp, outputFile);
+        Write(words_kvp);
     }
 
     private synchronized void processLine(String line, ConcurrentHashMap<String, Integer> wordsCount) {
@@ -64,11 +57,10 @@ public class FileHelper {
         }
     }
 
-    public void Write(Map<String, Integer> wordsCount, File outputFile) throws IOException {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputFile))) {
+    public void Write(Map<String, Integer> wordsCount) throws IOException {
+        try (OutputStream outputStream = Files.newOutputStream(Paths.get("Output.txt"), StandardOpenOption.CREATE)) {
             for (Map.Entry<String, Integer> entry : wordsCount.entrySet()) {
-                bufferedWriter.write(entry.getKey() + ":" + entry.getValue());
-                bufferedWriter.newLine();
+                outputStream.write((entry.getKey() + ":" + entry.getValue()).getBytes());
             }
 
         } catch (IOException exc) {
