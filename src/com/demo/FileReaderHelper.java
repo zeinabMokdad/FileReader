@@ -10,6 +10,16 @@ public class FileReaderHelper implements Runnable {
         this.FilePath = filePath;
     }
 
+    public void ReadFile() throws IOException {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(FilePath))) {
+            String line = null;
+            while ((line = br.readLine()) != null)
+                System.out.println(line);
+        } catch (IOException exc) {
+            System.out.println("exc.getMessage() = " + exc.getMessage());
+        }
+    }
+
     public void process() throws IOException {
         File file = new File(FilePath);
         try (InputStream inputStream = new FileInputStream(file)) {

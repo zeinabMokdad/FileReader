@@ -3,11 +3,12 @@ package com.demo;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.Format;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,17 +20,22 @@ public class FileHelper {
     }
 
     public void processLargeFiles() throws IOException {
-        Map<String, Integer> words_kvp = new HashMap<>();
-        File outputFile = new File(String.valueOf(Paths.get("Output.txt")));
+        ConcurrentHashMap<String, Integer> words_kvp = new ConcurrentHashMap<>();
+
+        Path path = Paths.get("Output.txt");
+        File outputFile = path.toFile();
+
         Files.lines(Paths.get(fileURI), StandardCharsets.UTF_8).parallel().forEach(
-                line -> processLine(line, words_kvp)
-        );
+                line -> processLine(line, words_kvp));
+
         Write(words_kvp, outputFile);
     }
 
     public void process() throws IOException {
-        Map<String, Integer> words_kvp = new HashMap<>();
-        File outputFile = new File(String.valueOf(Paths.get("Output.txt")));
+        ConcurrentHashMap<String, Integer> words_kvp = new ConcurrentHashMap<>();
+
+        Path path = Paths.get("Output.txt");
+        File outputFile = path.toFile();
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         Files.lines(Paths.get(fileURI), StandardCharsets.UTF_8).forEach(
@@ -39,17 +45,22 @@ public class FileHelper {
         Write(words_kvp, outputFile);
     }
 
-    private void processLine(String line, Map<String, Integer> wordsCount) {
+    private synchronized void processLine(String line, ConcurrentHashMap<String, Integer> wordsCount) {
         String[] words = line.split(" ");
+
         for (String word : words) {
             if (word.isEmpty() || word.isBlank())
                 continue;
+
             String lowerCaseWord = word.toLowerCase();
             Integer wordCount = wordsCount.get(lowerCaseWord);
             if (wordCount == null)
                 wordsCount.put(lowerCaseWord, 1);
             else
                 wordsCount.put(lowerCaseWord, wordCount + 1);
+
+//            wordsCount.compute(word.toLowerCase(), (key, val) ->
+//                    val == null ? 1 : val++);
         }
     }
 
