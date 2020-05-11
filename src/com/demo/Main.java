@@ -1,9 +1,13 @@
 package com.demo;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
@@ -19,10 +23,20 @@ public class Main {
 
 
         StringHelper stringHelper = new StringHelper(inputs);
-        ArrayList<String> subSequents = stringHelper.GetSubsequentString("abc");
-        for (String str : subSequents) {
-            System.out.println(str);
+
+        String inputString="";
+        do {
+
+            System.out.print("Enter a string : ");
+            Scanner scanner = new Scanner(System.in);
+            inputString = inputString + scanner.nextLine();
+            List<String> subSequents = stringHelper.Process(inputString);
+            for (String str : subSequents) {
+                System.out.println(str);
+            }
         }
+        while (!inputString.contains("!END!"));
+
 
 //        if (args.length == 0) {
 //            System.out.println("please provide filename in the command");
