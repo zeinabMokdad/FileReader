@@ -25,21 +25,25 @@ public class StringHelper {
         if (sub.length() > initialString.length())
             return null;
 
-        if (IsEqual(sub, initialString))
+        if (IsSubSequent(sub, initialString))
             return initialString;
 
         return null;
     }
 
-    private boolean IsEqual(String sub, String initialString) {
-        int index = 0;
+    private boolean IsSubSequent(String sub, String initialString) {
+        int sequenceCount = 0;
         int length = sub.length();
-        for (int i = 0; i < initialString.length(); i++) {
-            if (sub.charAt(index) == initialString.charAt(i))
-                index++;
+        int index = 0;
+        for (int i = 0; i < length; i++) {
+            for (int j = index; j < initialString.length(); j++) {
+                if (sub.charAt(i) == initialString.charAt(j)) {
+                    index = j;
+                    sequenceCount++;
+                    break;
+                }
+            }
         }
-        if (index == length)
-            return true;
-        return false;
+        return length == sequenceCount;
     }
 }
