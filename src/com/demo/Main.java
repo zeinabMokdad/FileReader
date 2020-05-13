@@ -21,7 +21,6 @@ public class Main {
         inputs.add("ahhhbiiic");
         inputs.add("cjjjjbjjjja");
 
-
         StringHelper stringHelper = new StringHelper(inputs);
 
         String inputString="";
@@ -34,6 +33,7 @@ public class Main {
             for (String str : subSequents) {
                 System.out.println(str);
             }
+            stringHelper.setInputString(subSequents);
         }
         while (!inputString.contains("!END!"));
 

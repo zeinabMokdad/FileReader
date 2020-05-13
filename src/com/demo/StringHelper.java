@@ -1,49 +1,58 @@
 package com.demo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class StringHelper {
-    private final List<String> inputString;
+    private List<String> inputString;
+    private HashMap<String, Integer> lastIndexByWord;
 
     public StringHelper(List<String> inputString) {
+
+        this.inputString = inputString;
+        lastIndexByWord = new HashMap<>();
+    }
+
+    public void setInputString(List<String> inputString) {
         this.inputString = inputString;
     }
 
     public List<String> Process(String str1) {
-        List<String> subsequents = new ArrayList<>();
+        HashMap<String, Integer> matchedIndexByWord = new HashMap<>();
         for (String input : inputString) {
-            String subSequent = GetSubsequentString(str1, input);
-            if (subSequent != null)
-                subsequents.add(subSequent);
+            SetSubsequentString(str1, input, matchedIndexByWord);
         }
-        return subsequents;
+        lastIndexByWord = matchedIndexByWord;
+        return new ArrayList<>(matchedIndexByWord.keySet());
     }
 
-    private String GetSubsequentString(String sub, String initialString) {
+    private void SetSubsequentString(String sub, String initialString, HashMap<String, Integer> matchedIndexByWord) {
 
         if (sub.length() > initialString.length())
-            return null;
+            return;
 
-        if (IsSubSequent(sub, initialString))
-            return initialString;
-
-        return null;
+        IsSubSequent(sub, initialString, matchedIndexByWord);
     }
 
-    private boolean IsSubSequent(String sub, String initialString) {
+    private boolean IsSubSequent(String sub, String initialString, HashMap<String, Integer> matchedIndexByWord) {
         int sequenceCount = 0;
         int length = sub.length();
-        int index = 0;
+        int matchedStringLasIndex = lastIndexByWord.getOrDefault(initialString, 0);
+
         for (int i = 0; i < length; i++) {
-            for (int j = index; j < initialString.length(); j++) {
+            for (int j = matchedStringLasIndex - 1; j < initialString.length(); j++) {
                 if (sub.charAt(i) == initialString.charAt(j)) {
-                    index = j;
+                    matchedStringLasIndex = j;
                     sequenceCount++;
-                    break;
+                    break; 
                 }
             }
         }
-        return length == sequenceCount;
+        if (length == sequenceCount) {
+            matchedIndexByWord.put(initialString, matchedStringLasIndex);
+            return true;
+        }
+        return true;
     }
 }
